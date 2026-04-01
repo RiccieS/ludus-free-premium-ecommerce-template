@@ -721,7 +721,7 @@
     const initFingerprint = async () => {
         try {
             // Nahraď YOUR_PUBLIC_API_KEY svým klíčem z Fingerprint dashboardu
-            const fpPromise = import('https://fpjscdn.net/v4/YOUR_PUBLIC_API_KEY')
+            const fpPromise = import('https://fpjscdn.net/v4/4le7zsJFzsu5FDLWSmU8')
                 .then(Fingerprint => Fingerprint.load({ region: 'eu' })); // Změň region na 'eu', pokud si účet založíš v Evropě
 
             const fp = await fpPromise;
