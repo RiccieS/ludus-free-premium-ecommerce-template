@@ -716,4 +716,27 @@
         // 4. Vložíme skript do stránky, čímž spustíme stahování
         document.body.appendChild(tsScript);
     });
+
+    // Inicializace FingerprintJS
+    const initFingerprint = async () => {
+        try {
+            // Nahraď YOUR_PUBLIC_API_KEY svým klíčem z Fingerprint dashboardu
+            const fpPromise = import('https://fpjscdn.net/v4/YOUR_PUBLIC_API_KEY')
+                .then(Fingerprint => Fingerprint.load({ region: 'eu' })); // Změň region na 'eu', pokud si účet založíš v Evropě
+
+            const fp = await fpPromise;
+            const result = await fp.get();
+
+            // Výsledek obsahuje visitorId a requestId. 
+            // Bot detection výsledky se posílají do tvého dashboardu.
+            console.log("FingerprintJS visitorId:", result.visitorId);
+            console.log("FingerprintJS requestId:", result.requestId);
+
+        } catch (error) {
+            console.error("FingerprintJS se nepodařilo načíst (možná ho blokuje Camoufox?):", error);
+        }
+    };
+
+    // Spustíme hned po načtení
+    initFingerprint();
 })(jQuery);
