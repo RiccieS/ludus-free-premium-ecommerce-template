@@ -717,23 +717,34 @@
         document.body.appendChild(tsScript);
     });
 
-    // Inicializace FingerprintJS
+// Inicializace FingerprintJS
     const initFingerprint = async () => {
         try {
-            // Nahraď YOUR_PUBLIC_API_KEY svým klíčem z Fingerprint dashboardu
+            console.log("[Fingerprint] Zkouším načíst skript z CDN...");
+            
+            // Ošetření .default pro ES6 moduly
             const fpPromise = import('https://fpjscdn.net/v4/4le7zsJFzsu5FDLWSmU8')
-                .then(Fingerprint => Fingerprint.load({ region: 'eu' })); // Změň region na 'eu', pokud si účet založíš v Evropě
+                .then(module => {
+                    const Fingerprint = module.default || module;
+                    return Fingerprint.load({ region: 'eu' }); 
+                });
 
             const fp = await fpPromise;
+            
+            console.log("[Fingerprint] Skript načten, spouštím analýzu (get)...");
             const result = await fp.get();
 
-            // Výsledek obsahuje visitorId a requestId. 
-            // Bot detection výsledky se posílají do tvého dashboardu.
-            console.log("FingerprintJS visitorId:", result.visitorId);
-            console.log("FingerprintJS requestId:", result.requestId);
+            console.log("✅ FingerprintJS visitorId:", result.visitorId);
+            console.log("✅ FingerprintJS requestId:", result.requestId);
 
         } catch (error) {
-            console.error("FingerprintJS se nepodařilo načíst (možná ho blokuje Camoufox?):", error);
+            // Vypíšeme přesný důvod chyby
+            console.error("❌ FingerprintJS se nepodařilo načíst!");
+            console.error("Důvod chyby:", error.message || error);
+            
+            if (error.message && error.message.includes('fetch')) {
+                 console.warn("💡 Tip: Vypadá to na blokování na úrovni sítě. Vypni AdBlock, uBlock, štíty v Brave nebo ochranu proti sledování ve Firefoxu.");
+            }
         }
     };
 
