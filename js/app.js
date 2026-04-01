@@ -717,34 +717,33 @@
         document.body.appendChild(tsScript);
     });
 
-// Inicializace FingerprintJS
+// Inicializace FingerprintJS (Verze 4)
     const initFingerprint = async () => {
         try {
-            console.log("[Fingerprint] Zkouším načíst skript z CDN...");
+            console.log("[Fingerprint] Zkouším načíst skript z CDN (v4)...");
             
-            // Ošetření .default pro ES6 moduly
+            // Verze 4 používá metodu start() místo load()
             const fpPromise = import('https://fpjscdn.net/v4/4le7zsJFzsu5FDLWSmU8')
                 .then(module => {
                     const Fingerprint = module.default || module;
-                    return Fingerprint.load({ region: 'eu' }); 
+                    return Fingerprint.start({ region: 'eu' }); // TADY BYLA OPRAVENA CHYBA
                 });
 
+            // Počkáme na inicializaci agenta
             const fp = await fpPromise;
             
             console.log("[Fingerprint] Skript načten, spouštím analýzu (get)...");
+            
+            // Získáme otisk
             const result = await fp.get();
 
             console.log("✅ FingerprintJS visitorId:", result.visitorId);
             console.log("✅ FingerprintJS requestId:", result.requestId);
 
         } catch (error) {
-            // Vypíšeme přesný důvod chyby
+            // Vypíšeme přesný důvod chyby, kdyby to blokoval AdBlock
             console.error("❌ FingerprintJS se nepodařilo načíst!");
             console.error("Důvod chyby:", error.message || error);
-            
-            if (error.message && error.message.includes('fetch')) {
-                 console.warn("💡 Tip: Vypadá to na blokování na úrovni sítě. Vypni AdBlock, uBlock, štíty v Brave nebo ochranu proti sledování ve Firefoxu.");
-            }
         }
     };
 
